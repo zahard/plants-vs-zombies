@@ -12,6 +12,7 @@ function PlantsVsZombies() {
 	    canvas = $("canvas"),
 	    mCanvas = $("mapCanvas");
 
+	this.isPaused = false;
 	this.levelOffset = 100;
 
 	var levelOffset = this.levelOffset;
@@ -228,6 +229,13 @@ function PlantsVsZombies() {
 
 		window.addEventListener('mouseup',function(e) {
 			_this.mouse.up = true;
+		});
+
+		window.addEventListener('keyup',function(e) {
+			var ESC = 27;
+			if( e.keyCode == ESC ) {
+				_this.pauseGame(e);
+			}
 		});	
 
 		this.on('mousedown', function() {
@@ -255,7 +263,30 @@ function PlantsVsZombies() {
 		});
 	}
 
+	this.pauseGame = function(e) {
+		if( _this.isPaused ) {
+			_this.isPaused = false;
+			_this.animate();
+		} else {
+			_this.isPaused = true;
+			cxt.save();
+			cxt.globalAlpha = 0.7;
+			cxt.fillStyle = '#333';
+			cxt.fillRect(0,0,this.width,this.height);
+			cxt.globalAlpha = 1;
+			cxt.fillStyle = '#fff'
+			cxt.font = '40px Impact';
+			var text = 'P A U S E D'
+			cxt.fillText(text, this.width/2 - cxt.measureText(text).width/2, this.height/2 + 20);
+			cxt.restore();
+
+		}
+	}
+
 	this.animate = function() {
+		if( _this.isPaused )
+			return;
+
 		_this.update();
 		_this.draw();
 		requestAnimationFrame(window.Plants.animate)
@@ -322,10 +353,14 @@ function PlantsVsZombies() {
 		if( this.drag ) {
 			var c = parseInt(this.mouse.x / 60);
 			var l = parseInt((this.mouse.y - levelOffset ) / 60);
-			if( ! this.plants[l] || ! this.plants[l][c] ) {
-				cxt.fillStyle = '#7f7'
-				cxt.fillRect(c*60, levelOffset + l * 60, 60,60);	
-				this.activeCell = {c:c,l:l}
+			if( l >= 0 && l < 5 && c >= 0 && c < 9 ) {
+				if( ! this.plants[l] || ! this.plants[l][c] ) {
+					cxt.fillStyle = '#7f7'
+					cxt.fillRect(c*60, levelOffset + l * 60, 60,60);	
+					this.activeCell = {c:c,l:l}
+				} else {
+					this.activeCell = null;
+				}
 			} else {
 				this.activeCell = null;
 			}
