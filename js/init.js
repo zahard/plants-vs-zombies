@@ -109,6 +109,28 @@ function PlantsVsZombies() {
 			_this.avalablePlantsStatusCheck();
 			_this.drawHud();
 		});
+
+		this.on('click',function(e) {
+			_this.checkShovelClick();	
+		});
+	}
+
+	this.shovelActivated = false;
+	this.checkShovelClick = function() {
+		if( this.shovelActivated ) {
+			this.shovelActivated = false;
+			var r = this.cellToRemove;
+			if( r && this.plants[r.l][r.c] ) {
+				this.plants[r.l][r.c].die();
+			}
+
+		} else {
+			if( this.mouse.y <= 60 && this.mouse.y >= 10 && 
+				this.mouse.x >= this.width-160 &&
+				this.mouse.x <= this.width-110 ) {
+				this.shovelActivated = true;
+			}
+		}
 	}
 
 	this.avalablePlantsStatusCheck = function() {
@@ -135,16 +157,22 @@ function PlantsVsZombies() {
 		map.save();
 		map.fillStyle = '#333';
 		map.fillRect(0, 0, this.width, 70);
+		
+		//Available plants
 		for(var i in this.availablePlants ) {
 			this.availablePlants[i].draw();
 		}
 
+		map.fillStyle = '#fff';
+		map.fillRect(this.width-160, 10, 50, 50);
+
+		map.drawImage( $('img-showel'), this.width-160, 10 , 50 , 50);
+
+		//Display coins
+		var txt = '$'+this.sunCoins;
 		map.fillStyle = '#777';
 		map.fillRect(this.width-100, 10, 90, 50);
-		
-		var txt = '$'+this.sunCoins;
 		map.fillStyle = '#ff0';
-		
 		map.font = 'bold 26px Arial';
 		map.fillText('$'+this.sunCoins, this.width - (110 - map.measureText(txt).width/2) , 45);
 		map.restore();
@@ -367,6 +395,7 @@ function PlantsVsZombies() {
 			
 		}
 
+
 		for (var line = 0; line < 5; line++ ) {
 			for (var cell = this.plants[line].length;cell--; ) {
 				if( this.plants[line][cell] )
@@ -393,6 +422,22 @@ function PlantsVsZombies() {
 			cxt.restore();
 		}
 
+
+		if( this.shovelActivated ) {
+			var c = parseInt(this.mouse.x / 60);
+			var l = parseInt((this.mouse.y - levelOffset ) / 60);
+			if( l >= 0 && l < 5 && c >= 0 && c < 9 ) {
+				cxt.save();
+				cxt.fillStyle = '#f00'
+				cxt.globalAlpha = 0.3;
+				cxt.fillRect(c*60, levelOffset + l * 60, 60,60);	
+				cxt.restore();
+				cxt.drawImage($('img-showel'), c*60 + 5 , levelOffset + l * 60 + 5, 50 , 50);
+				this.cellToRemove = {c:c,l:l}
+			} else {
+				this.cellToRemove = null;
+			}
+		}
 	}
 
 	this.trigger = function(event) {

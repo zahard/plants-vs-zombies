@@ -41,6 +41,13 @@ AvailablePlant.prototype.draw = function() {
 	
 	map.fillStyle = this.plant.color;
 	map.fillRect( this.x + 10, this.y + 10, this.w - 20, this.w - 20 );
+	map.save();
+	map.font = 'bold 16px Arial';
+	map.fillStyle = '#333';
+	map.fillText( this.plant.price, this.x + 5, this.y + 15);
+	map.strokeStyle = '#fff';
+	map.strokeText( this.plant.price, this.x +5, this.y + 15);	
+	map.restore();
 }
 
 AvailablePlant.prototype.update = function() {
