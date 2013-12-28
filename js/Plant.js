@@ -22,6 +22,8 @@ AvailablePlant = function(plantName, position) {
 }
 
 AvailablePlant.prototype.draw = function() {
+	map.save();
+
 	if( ! this.isReloading ) {
 		map.fillStyle = this.isAvailable ? '#fff' : '#ccc';
 		map.fillRect( this.x, this.y, this.w, this.w);
@@ -41,12 +43,14 @@ AvailablePlant.prototype.draw = function() {
 	
 	map.fillStyle = this.plant.color;
 	map.fillRect( this.x + 10, this.y + 10, this.w - 20, this.w - 20 );
-	map.save();
-	map.font = 'bold 16px Arial';
-	map.fillStyle = '#333';
+	
+	map.font = 'bold 18px Arial';
+	map.fillStyle = 'yellow';
+	map.fillText( this.plant.price, this.x + 4, this.y + 16);
+	map.font = '16px Arial';
+	map.fillStyle = '#333	';
 	map.fillText( this.plant.price, this.x + 5, this.y + 15);
-	map.strokeStyle = '#fff';
-	map.strokeText( this.plant.price, this.x +5, this.y + 15);	
+
 	map.restore();
 }
 

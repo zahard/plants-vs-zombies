@@ -27,10 +27,14 @@ PlantSunFlower.prototype.updateSunsOrder = function() {
 
 Sun = function (x,y,flower) {
 	this.x = x;
-	this.y = y;
+	this.y = 85;
+	this.destY = y;
+
+	this.isFalling = true;
 	this.flower = flower || null;
 	this.radius = 12;
 	if( this.flower ) {
+		this.y = this.flower.y - this.flower.h;
 		this.flower.suns++;
 		this.order = this.flower.suns - 1;
 	}
@@ -51,11 +55,20 @@ Sun.prototype.draw = function () {
 	cxt.restore();
 }
 
-Sun.prototype.update = function () {}
+Sun.prototype.update = function () {
+	if( this.isFalling ) {
+		if( this.y - this.destY ) {
+			this.y += 0.5;
+		} else {
+			this.isFalling = false;
+		}
+	}
+}
+
 Sun.prototype.getPosition = function () {
 	var p = { x: this.x, y: this.y};
 	if( this.flower ) {
-		p.x = p.x - 20 + this.order * 10;
+		p.x = p.x - 5 + this.order * 10;
 	}
 	return p;
 }

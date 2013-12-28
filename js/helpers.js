@@ -32,7 +32,7 @@ function rand(){
 		to = arguments[1];
 	}
 
-	return Math.floor( to - to * Math.random() ) + from;
+	return Math.floor( Math.random() * ( to - from + 1 ) + from );
 }
 
 

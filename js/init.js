@@ -36,26 +36,30 @@ function PlantsVsZombies() {
 	this.sunCoins = 100;
 
 	this.lastSunSpawnTime = new Date().getTime();
-	this.sunInterval = 15000;
+	this.sunInterval = 3000;
 
-
+	this.shovelActivated = false;
+	
 	this.reloadingItems = 0;
 
 	this.zombedLines = [false,false,false,false,false];
 
 	this.zombies = [];
 	
-	this.plants = [];
-	
 	this.suns = [];
 
-	for( var line = 5; line--;){
-		this.plants[line] = [];
-		for( var cell = 8; cell--;){
-			this.plants[line][cell] = undefined;	
-		}
-	}
+	this.plants = generatePlantCells();
 
+	function generatePlantCells() {
+		var plants = [];
+		for( var line = 5; line--;){
+			plants[line] = [];
+			for( var cell = 8; cell--;){
+				plants[line][cell] = undefined;	
+			}
+		}
+		return plants;
+	}
 
 	this.isZombieOnLine = function(line){
 		return this.zombedLines[line];
@@ -115,7 +119,7 @@ function PlantsVsZombies() {
 		});
 	}
 
-	this.shovelActivated = false;
+	
 	this.checkShovelClick = function() {
 		if( this.shovelActivated ) {
 			this.shovelActivated = false;
@@ -166,7 +170,7 @@ function PlantsVsZombies() {
 		map.fillStyle = '#fff';
 		map.fillRect(this.width-160, 10, 50, 50);
 
-		map.drawImage( $('img-showel'), this.width-160, 10 , 50 , 50);
+		map.drawImage( $('img-shovel'), this.width-160, 10 , 50 , 50);
 
 		//Display coins
 		var txt = '$'+this.sunCoins;
@@ -323,6 +327,8 @@ function PlantsVsZombies() {
 
 	this.update = function() {
 
+		var t = new Date().getTime();
+
 		if( this.reloadingItems ) {
 			this.updateHud();
 		}
@@ -343,23 +349,24 @@ function PlantsVsZombies() {
 		}
 
 
-		var t = new Date().getTime();
-		
+		//Spawn sun
 		if( t - this.sunInterval > this.lastSunSpawnTime && this.suns.length < 10 ) {
-			this.suns.push( new Sun( rand(30,this.width-200), rand(100, this.height-50) ) );
-			this.lastSunSpawnTime = t;
+			this.spawnSun(t);
 		}
 
-		
+		//Spawn zombie if required
 		if( t - this.spawnInterval > this.lastSpawnTime && this.zombies.length < 2 ) {
-			var line = rand(4);
-			this.zombies.push( new Zombie(line) );
-			this.zombedLines[line] = true;
-			this.lastSpawnTime = t;
+			this.spawnZombie(t);
 		}
-
+			
 		for (var i = this.zombies.length;i--; ) {
 			this.zombies[i].update();
+		}
+
+		if( this.suns.length) {
+			for( var i = this.suns.length;i--;){
+				this.suns[i].update();
+			}
 		}
 
 		for (var line = 0; line < 5; line++ ) {
@@ -432,12 +439,24 @@ function PlantsVsZombies() {
 				cxt.globalAlpha = 0.3;
 				cxt.fillRect(c*60, levelOffset + l * 60, 60,60);	
 				cxt.restore();
-				cxt.drawImage($('img-showel'), c*60 + 5 , levelOffset + l * 60 + 5, 50 , 50);
+				cxt.drawImage($('img-shovel'), c*60 + 5 , levelOffset + l * 60 + 5, 50 , 50);
 				this.cellToRemove = {c:c,l:l}
 			} else {
 				this.cellToRemove = null;
 			}
 		}
+	}
+
+	this.spawnSun = function(t) {
+		this.suns.push( new Sun( rand(30,this.width-200), rand(150, this.height-30) ) );
+		this.lastSunSpawnTime = t;
+	}
+
+	this.spawnZombie = function(t) {
+		var line = rand(1,5) - 1;
+		this.zombies.push( new Zombie(line) );
+		this.zombedLines[line] = true;
+		this.lastSpawnTime = t;
 	}
 
 	this.trigger = function(event) {
