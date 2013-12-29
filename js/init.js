@@ -33,7 +33,7 @@ function PlantsVsZombies() {
 	this.lastSpawnTime = 0;
 	this.spawnInterval = 10000;
 	
-	this.sunCoins = 100;
+	this.sunCoins = 1000;
 
 	this.lastSunSpawnTime = new Date().getTime();
 	this.sunInterval = 3000;

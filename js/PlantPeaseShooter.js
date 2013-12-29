@@ -6,6 +6,8 @@ PlantPeaseShooter = function() {
 	Plant.apply(this,arguments);
 	this.color = 'blue';
 	
+	this.image = $('img-peashooter');
+	
 	this.price = 100;
 
 	this.lastFireTime = 0;
@@ -16,6 +18,7 @@ PlantPeaseShooter = function() {
 	this.health = 100;
 }
 extend(PlantPeaseShooter,Plant);
+
 
 PlantPeaseShooter.prototype.update = function() {
 	var t = new Date().getTime();
@@ -44,7 +47,10 @@ PlantPeaseShooter.prototype.update = function() {
 }
 
 PlantPeaseShooter.prototype.draw = function() {
-	Plant.prototype.draw.apply(this);
+	//Plant.prototype.draw.apply(this);
+
+	cxt.drawImage( this.image, this.x - this.w , this.y -60, 80,80)
+
 	if( this.shots.length) {
 		for( var i = this.shots.length;i--;){
 			this.shots[i].draw();
@@ -60,9 +66,9 @@ PlantPeaseShooter.prototype.fire = function() {
 Shot = function(shooter, speed) {
 	this.shooter = shooter;
 	this.speed = speed || 2;
-	this.radius = 12;
-	this.x = shooter.x + 20;
-	this.y = shooter.y - 30;
+	this.radius = 10;
+	this.x = shooter.x + 25;
+	this.y = shooter.y - 35;
 	this.damage = 10;
 }
 Shot.prototype.update = function() {
@@ -92,9 +98,17 @@ Shot.prototype.draw = function() {
 	cxt.save();
 	cxt.beginPath();
 	cxt.arc(this.x, this.y, this.radius,  rad(0) , rad(360), false );
-	cxt.fillStyle = '#f87';
+	
+	var grd = cxt.createLinearGradient(this.x,this.y,this.x+10,this.y + 10);
+	grd.addColorStop(0, '#A2DC41');
+	grd.addColorStop(1, '#5E9406');
+
+
+	cxt.fillStyle = grd;
+	
 	cxt.fill();
-	cxt.strokeStyle = '#777';
+	cxt.lineWidth = 1;
+	cxt.strokeStyle = '#5E9406';
 	cxt.stroke();
 	cxt.closePath();
 }

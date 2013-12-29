@@ -97,7 +97,7 @@ Plant.prototype.draw = function() {
 	cxt.fillRect( this.x - this.w/2, this.y - this.h, this.w,this.h);
 	cxt.strokeRect( this.x - this.w/2, this.y - this.h, this.w,this.h);	
 
-	//Display zombie helth
+	//Display health
 	cxt.font = '16px Arial';
 	cxt.fillStyle = '#fff';
 	cxt.fillText(this.health,this.x - 15,this.y - 20);
